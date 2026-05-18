@@ -4,10 +4,12 @@ junit-jupiter = "5.10.0"
 assertj = "3.27.7"
 spring-boot = "3.4.0"
 spring-dependency-management = "1.1.6"
+spot-bugs = "6.0.26"
 
 [plugins]
 springBoot = { id = "org.springframework.boot", version.ref = "spring-boot" }
 springDependencyManagement = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }
+spotBugs = { id = "com.github.spotbugs", version.ref = "spot-bugs"}
 
 [libraries]
 lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
