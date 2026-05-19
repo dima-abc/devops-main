@@ -61,6 +61,10 @@ tasks.register<Zip>("zipJavaDoc") {
     destinationDirectory.set(layout.buildDirectory.dir("archives")) // Директория, куда будет сохранен архив
 }
 
+tasks.javadoc {
+    finalizedBy("zipJavaDoc")
+}
+
 tasks.spotbugsMain {
     reports.create("html") {
         required = true
@@ -119,4 +123,27 @@ tasks.register("checkJarSize") {
 
 tasks.jar {
     finalizedBy("checkJarSize")
+}
+
+tasks.register<Zip>("archiveResources") {
+    group = "custom optimization"
+    description="Archives the resources folder into a ZIP file."
+
+    dependsOn("build")
+
+    val inputDir = file("src/main/resources")
+    val outputDir = layout.buildDirectory.dir("archives")
+    inputs.dir(inputDir) // Входные данные для инкрементальной сборки
+    outputs.file(outputDir.map { it.file("resources.zip") }) // Выходной файл
+
+    from(inputDir)
+    destinationDirectory.set(outputDir)
+    archiveFileName.set("resources.zip")
+    doLast {
+        println("Resources archived successfully at ${outputDir.get().asFile.absolutePath}")
+    }
+}
+
+tasks.build {
+    finalizedBy("archiveResources")
 }
