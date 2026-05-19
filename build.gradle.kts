@@ -71,3 +71,52 @@ tasks.spotbugsMain {
 tasks.test {
     finalizedBy(tasks.spotbugsMain)
 }
+
+tasks.register("hello") {
+    group = "Custom Tasks" // Группа для удобства в './gradlew tasks'
+    description = "Prints hello message"
+    doLast {
+        println("Hello world from Gradle!")
+    }
+}
+
+tasks.register("cleanReports") {
+    group = "Cleanup"
+    description = "Deletes all report files"
+    doLast {
+        file("build/reports").deleteRecursively()
+        println("Reports deleted")
+    }
+}
+
+val isDev = project.hasProperty("dev")
+if (isDev) {
+    println("Development environment: detected")
+}
+
+tasks.withType<JavaExec> {
+    jvmArgs("-Xms512m", "-Xmx1024m")
+}
+
+tasks.register("checkJarSize") {
+    group = "verification"
+    description = "Checks the size of the generated JAR file."
+    dependsOn("jar")
+    doLast {
+        val jarFile = file("build/libs/${project.name}-${project.version}.jar")
+        if(jarFile.exists()) {
+            val sizeInMb = jarFile.length() / (1024.0 * 1024.0)
+            if(sizeInMb > 5) {
+                println("WARNING: JAR file exceeds the size limit of 5 MB. Current size: $sizeInMb MB")
+            } else {
+                println("JAR file is within the acceptable size limit. Current size: $sizeInMb MB")
+            }
+        } else {
+            println("JAR file not not found. Please make sure the build process completed successfully.")
+        }
+    }
+}
+
+tasks.jar {
+    finalizedBy("checkJarSize")
+}
