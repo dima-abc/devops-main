@@ -4,6 +4,7 @@ plugins {
     jacoco
     alias(libs.plugins.springBoot)
     alias(libs.plugins.springDependencyManagement)
+    alias(libs.plugins.spotBugs)
 }
 
 group = "ru.job4j.devops"
@@ -58,4 +59,15 @@ tasks.register<Zip>("zipJavaDoc") {
     from("build/docs/javadoc") // Исходная папка для упаковки
     archiveFileName.set("javadoc.zip") // Имя создаваемого архива
     destinationDirectory.set(layout.buildDirectory.dir("archives")) // Директория, куда будет сохранен архив
+}
+
+tasks.spotbugsMain {
+    reports.create("html") {
+        required = true
+        outputLocation.set(layout.buildDirectory.file("/reports/spotbugs/spotbugs.html"))
+    }
+}
+
+tasks.test {
+    finalizedBy(tasks.spotbugsMain)
 }
