@@ -64,12 +64,8 @@ tasks.register<Zip>("zipJavaDoc") {
 tasks.spotbugsMain {
     reports.create("html") {
         required = true
-        outputLocation.set(layout.buildDirectory.file("/reports/spotbugs/spotbugs.html"))
+        outputLocation.set(layout.buildDirectory.file("reports/spotbugs/spotbugs.html"))
     }
-}
-
-tasks.test {
-    finalizedBy(tasks.spotbugsMain)
 }
 
 tasks.register("hello") {
