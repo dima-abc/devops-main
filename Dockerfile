@@ -1,17 +1,10 @@
-FROM gradle:9.4.1-jdk21 as builder
+FROM gradle:8.11.1-jdk21 as builder
 RUN mkdir devops_main
 WORKDIR /devops_main
-
-COPY build.gradle.kts settings.gradle.kts gradle.properties ./
-COPY gradle/libs.versions.toml ./gradle/libs.versions.toml
-RUN gradle --no-daemon dependencies
-
 COPY . .
-RUN gradle --no-daemon build
 RUN jar xf /devops_main/build/libs/DevOps-1.0.0.jar
 
-RUN jdeps \
-    --ignore-missing-deps -q \
+RUN jdeps --ignore-missing-deps -q \
     --recursive \
     --multi-release 21 \
     --print-module-deps \
@@ -29,9 +22,7 @@ RUN jlink \
 FROM debian:bookworm-slim
 ENV JAVA_HOME /user/java/jdk21
 ENV PATH $JAVA_HOME/bin:$PATH
-
 COPY --from=builder /slim-jre $JAVA_HOME
 COPY --from=builder /devops_main/build/libs/DevOps-1.0.0.jar .
-
-EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "DevOps-1.0.0.jar"]
+
