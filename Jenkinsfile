@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'agent1' }
+    agent { label 'agent-jdk21' }
 
     tools {
         git 'Default'
@@ -42,6 +42,14 @@ pipeline {
                             sh './gradlew jacocoTestReport'
                             echo 'JaCoCo Verification'
                             sh './gradlew jacocoTestCoverageVerification'
+                        }
+                    }
+                }
+                stage('Docker Build') {
+                    steps {
+                        script {
+                            echo 'Docker Build'
+                            sh 'docker build -t devops-main'
                         }
                     }
                 }
