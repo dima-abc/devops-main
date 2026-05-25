@@ -49,10 +49,17 @@ pipeline {
                     steps {
                         script {
                             echo 'Docker Build'
-                            sh 'docker build -t devops_main'
+                            sh 'docker build -t devops_main .'
                         }
                     }
                 }
+                stage('Update DB') {
+                    steps {
+                        script {
+                            sh './gradlew update -P"dotenv.filename"="/var/agent-jdk21/env/.env.develop"'
+                            }
+                        }
+                    }
             }
         }
     }
