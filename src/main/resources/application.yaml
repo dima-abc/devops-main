@@ -1,0 +1,23 @@
+server:
+  port: 9100
+spring:
+  application:
+    name: DevOps
+  datasource:
+    url: jdbc:postgresql://localhost:5439/devops_db
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: password
+    hikari:
+      schema: devops # Схема таблиц в БД
+      minimum-idle: 2
+      idle-timeout: 300000 #MS
+      maximum-pool-size: 10
+      data-source-properties:
+        ApplicationName: ${spring.application.name}
+  liquibase:
+    change-log: classpath:/db/changelog/changelog-master.xml
+    enabled: true
+    default-schema: ${spring.datasource.hikari.schema}
+    liquibase-schema: ${spring.datasource.hikari.schema}
+
