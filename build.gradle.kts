@@ -1,3 +1,35 @@
+repositories {
+    mavenCentral()
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath(libs.liquiabase)
+    }
+}
+
+dependencies {
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
+    implementation(libs.springBootStarterWeb)
+    implementation(libs.springBootStartrDataJpa)
+    implementation(libs.liquiabase)
+    implementation(libs.postgresql)
+    testImplementation(libs.springBootStarterTest)
+    testRuntimeOnly(libs.junitPlatformLauncher)
+    testImplementation(libs.junitJupiter)
+    testImplementation(libs.assertj)
+    liquibaseRuntime(libs.liquiabase)
+    liquibaseRuntime(libs.postgresql)
+    liquibaseRuntime(libs.jaxbiApi)
+    liquibaseRuntime(libs.logbackCore)
+    liquibaseRuntime(libs.logbackClassic)
+    liquibaseRuntime(libs.picocli)
+}
+
 plugins {
     checkstyle
     java
@@ -5,6 +37,7 @@ plugins {
     alias(libs.plugins.springBoot)
     alias(libs.plugins.springDependencyManagement)
     alias(libs.plugins.spotBugs)
+    alias(libs.plugins.liquibaseGradle)
 }
 
 group = "ru.job4j.devops"
@@ -30,23 +63,6 @@ tasks.jacocoTestCoverageVerification {
             }
         }
     }
-}
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    compileOnly(libs.lombok)
-    annotationProcessor(libs.lombok)
-    implementation(libs.springBootStarterWeb)
-    implementation(libs.springBootStartrDataJpa)
-    implementation(libs.liquiabase)
-    implementation(libs.postgresql)
-    testImplementation(libs.springBootStarterTest)
-    testRuntimeOnly(libs.junitPlatformLauncher)
-    testImplementation(libs.junitJupiter)
-    testImplementation(libs.assertj)
 }
 
 tasks.withType<Test> {
@@ -103,9 +119,9 @@ tasks.register("checkJarSize") {
     dependsOn("jar")
     doLast {
         val jarFile = file("build/libs/${project.name}-${project.version}.jar")
-        if(jarFile.exists()) {
+        if (jarFile.exists()) {
             val sizeInMb = jarFile.length() / (1024.0 * 1024.0)
-            if(sizeInMb > 5) {
+            if (sizeInMb > 5) {
                 println("WARNING: JAR file exceeds the size limit of 5 MB. Current size: $sizeInMb MB")
             } else {
                 println("JAR file is within the acceptable size limit. Current size: $sizeInMb MB")
@@ -118,4 +134,19 @@ tasks.register("checkJarSize") {
 
 tasks.jar {
     finalizedBy("checkJarSize")
+}
+
+liquibase {
+    activities.register("main") {
+        this.arguments = mapOf(
+            "logLevel" to "info",
+            "url" to "jdbc:postgresql://localhost:5439/devops_db",
+            "username" to "postgres",
+            "password" to "password",
+            "defaultSchemaName" to "devops",
+            "classpath" to "src/main/resources",
+            "changelogFile" to "db/changelog/changelog-master.xml"
+        )
+    }
+    runList = "main"
 }
