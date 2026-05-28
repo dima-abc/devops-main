@@ -13,6 +13,20 @@ pipeline {
                                 }
                             }
                         }
+         stage('check') {
+                steps {
+                    script {
+                        sh './gradlew check -P"dotenv.filename"="/var/agent-jdk21/env/.env.develop"'
+                    }
+                }
+         }
+         stage('Update DB') {
+                steps {
+                     script {
+                         sh './gradlew update -P"dotenv.filename"="/var/agent-jdk21/env/.env.develop"'
+                     }
+                }
+         }
         stage('Build') {
             parallel {
                 stage('1. Checkstyle') {
@@ -29,7 +43,7 @@ pipeline {
                     steps {
                         script {
                             echo 'Build'
-                            sh './gradlew compileJava'
+                            sh './gradlew compileJava -P"dotenv.filename"="/var/agent-jdk21/env/.env.develop"'
                         }
                     }
                 }
@@ -37,7 +51,7 @@ pipeline {
                     steps {
                         script {
                             echo 'Test'
-                            sh './gradlew test'
+                            sh './gradlew test -P"dotenv.filename"="/var/agent-jdk21/env/.env.develop"'
                             echo 'JaCoCo Report'
                             sh './gradlew jacocoTestReport'
                             echo 'JaCoCo Verification'
@@ -51,15 +65,9 @@ pipeline {
             steps {
                 script {
                     echo 'Docker Build'
+                    sh './gradlew bootJar -P"dotenv.filename"="/var/agent-jdk21/env/.env.develop"'
                     sh 'docker build -t devops_main .'
                 }
-            }
-        }
-        stage('Update DB') {
-            steps {
-                 script {
-                     sh './gradlew update -P"dotenv.filename"="/var/agent-jdk21/env/.env.develop"'
-                 }
             }
         }
     }

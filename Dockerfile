@@ -1,7 +1,6 @@
 FROM gradle:8.11.1-jdk21 as builder
 WORKDIR /devops_main
 COPY . .
-RUN ./gradlew build -x test --no-daemon
 RUN jar xf /devops_main/build/libs/DevOps-1.0.0.jar
 
 RUN jdeps --ignore-missing-deps -q \
