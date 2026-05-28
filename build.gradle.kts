@@ -38,6 +38,7 @@ plugins {
     alias(libs.plugins.springDependencyManagement)
     alias(libs.plugins.spotBugs)
     alias(libs.plugins.liquibaseGradle)
+    alias(libs.plugins.uzzuDotenv)
 }
 
 group = "ru.job4j.devops"
@@ -87,14 +88,6 @@ tasks.spotbugsMain {
     }
 }
 
-tasks.register("hello") {
-    group = "Custom Tasks" // Группа для удобства в './gradlew tasks'
-    description = "Prints hello message"
-    doLast {
-        println("Hello world from Gradle!")
-    }
-}
-
 tasks.register("cleanReports") {
     group = "Cleanup"
     description = "Deletes all report files"
@@ -102,11 +95,6 @@ tasks.register("cleanReports") {
         file("build/reports").deleteRecursively()
         println("Reports deleted")
     }
-}
-
-val isDev = project.hasProperty("dev")
-if (isDev) {
-    println("Development environment: detected")
 }
 
 tasks.withType<JavaExec> {
@@ -139,14 +127,20 @@ tasks.jar {
 liquibase {
     activities.register("main") {
         this.arguments = mapOf(
-            "logLevel" to "info",
-            "url" to "jdbc:postgresql://localhost:5439/devops_db",
-            "username" to "postgres",
-            "password" to "password",
+            "logLevel" to env.LOG_LEVEL.value,
+            "url" to env.DB_URL.value,
+            "username" to env.DB_USERNAME.value,
+            "password" to env.DB_PASSWORD.value,
             "defaultSchemaName" to "devops",
             "classpath" to "src/main/resources",
             "changelogFile" to "db/changelog/changelog-master.xml"
         )
     }
     runList = "main"
+}
+
+tasks.register("profile") {
+    doFirst {
+        println(env.DB_URL.value)
+    }
 }
