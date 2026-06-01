@@ -1,27 +1,22 @@
 package ru.job4j.devops.listener;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.awaitility.Awaitility.await;
+
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.core.KafkaTemplate;
-import ru.job4j.devops.container.KafkaContainerInitializer;
-import ru.job4j.devops.container.PostgreSQLContainerInitializer;
+import ru.job4j.devops.container.BaseIT;
 import ru.job4j.devops.models.CalcEvent;
 import ru.job4j.devops.models.User;
 import ru.job4j.devops.models.enums.CalcType;
 import ru.job4j.devops.repository.CalcEventRepository;
 import ru.job4j.devops.repository.UserRepository;
 
-import java.math.BigDecimal;
-import java.time.Duration;
-import java.util.concurrent.TimeUnit;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.awaitility.Awaitility.await;
-
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-public class CalcEventListenerTest
-    implements PostgreSQLContainerInitializer, KafkaContainerInitializer {
+public class CalcEventListenerTest extends BaseIT {
   @Autowired private KafkaTemplate<String, Object> kafkaTemplate;
   @Autowired private UserRepository userRepository;
   @Autowired private CalcEventRepository calcEventRepository;
