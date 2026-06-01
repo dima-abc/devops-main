@@ -4,14 +4,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CalcApplicationTests {
+class CalcApplicationTest {
+  @Test
+  void contextLoads() {}
 
-    @Test
-    void contextLoads() {
-    }
-
-    @Test
-    void mainMethodTest() {
-        CalcApplication.main(new String[] {});
-    }
+  @Test
+  void mainMethodTest() {
+    CalcApplication.main(new String[] {});
+  }
 }
