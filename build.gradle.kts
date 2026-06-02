@@ -18,11 +18,14 @@ dependencies {
     implementation(libs.springBootStartrDataJpa)
     implementation(libs.liquiabase)
     implementation(libs.postgresql)
+    implementation(libs.sprringKafka)
     testImplementation(libs.springBootStarterTest)
     testRuntimeOnly(libs.junitPlatformLauncher)
     testImplementation(libs.junitJupiter)
     testImplementation(libs.assertj)
     testImplementation(libs.testcontainersPostgresql)
+    testImplementation(libs.testcontainersKafka)
+    testImplementation(libs.awaitility)
     liquibaseRuntime(libs.liquiabase)
     liquibaseRuntime(libs.postgresql)
     liquibaseRuntime(libs.jaxbiApi)
@@ -153,23 +156,23 @@ tasks.named<Test>("test") {
 }
 
 // Зависимости для интеграционных тестов
-val integrationTest by sourceSets.creating {
-    java {
-        srcDir("src/integrationTest/java")
+sourceSets {
+    val integrationTest by sourceSets.creating {
+        java.srcDir("src/integrationTest/java")
+        resources.srcDir("src/integrationTest/resources")
+        DuplicatesStrategy.INCLUDE
+        compileClasspath += sourceSets["main"].output + sourceSets["test"].output
+        runtimeClasspath += sourceSets["main"].output + sourceSets["test"].output
     }
-    resources {
-        srcDir("src/integrationTest/resources")
+}
+val integrationTest = sourceSets["integrationTest"]
+configurations {
+    val integrationTestImplementation by configurations.getting {
+        extendsFrom(configurations["testImplementation"])
     }
-    compileClasspath += sourceSets["main"].output + sourceSets["test"].output
-    runtimeClasspath += sourceSets["main"].output + sourceSets["test"].output
-}
-
-val integrationTestImplementation by configurations.getting {
-    extendsFrom(configurations["testImplementation"])
-}
-
-val integrationTestRuntimeOnly by configurations.getting {
-    extendsFrom(configurations["testRuntimeOnly"])
+    val integrationTestRuntimeOnly by configurations.getting {
+        extendsFrom(configurations["testRuntimeOnly"])
+    }
 }
 
 tasks.register<Test>("integrationTest") {
@@ -183,4 +186,8 @@ tasks.register<Test>("integrationTest") {
 
 tasks.check {
     dependsOn("integrationTest")
+}
+
+tasks.withType<Copy>().configureEach {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }

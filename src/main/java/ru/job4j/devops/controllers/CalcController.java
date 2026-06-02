@@ -2,8 +2,8 @@ package ru.job4j.devops.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.job4j.devops.models.Result;
-import ru.job4j.devops.models.TwoArgs;
+import ru.job4j.devops.dto.Result;
+import ru.job4j.devops.dto.TwoArgs;
 
 /**
  * Контроллер.

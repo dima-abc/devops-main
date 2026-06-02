@@ -12,7 +12,7 @@ jaxb-api = "2.3.1"
 logback = "1.5.15"
 picocli = "4.6.1"
 uzzu-dotenv = "4.0.0"
-testcontainers-postgresql = "1.20.4"
+testcontainers = "1.20.4"
 
 [plugins]
 springBoot = { id = "org.springframework.boot", version.ref = "spring-boot" }
@@ -35,5 +35,7 @@ jaxbiApi = { module = "javax.xml.bind:jaxb-api", version.ref = "jaxb-api" }
 logbackCore = { module = "ch.qos.logback:logback-core", version.ref = "logback" }
 logbackClassic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 picocli = { module = "info.picocli:picocli", version.ref = "picocli" }
-testcontainersPostgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers-postgresql"}
-
+sprringKafka = { module = "org.springframework.kafka:spring-kafka" }
+awaitility = { module = "org.awaitility:awaitility" }
+testcontainersPostgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
+testcontainersKafka = { module = "org.testcontainers:kafka", version.ref = "testcontainers" }
